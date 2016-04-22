@@ -65,7 +65,8 @@ public class BeetlSqlAutoConfiguration implements TransactionManagementConfigure
         factory.setDbStyle(dbStyle);
 
         factory.setSqlLoader(sqlLoader);
-        factory.setNc(new UpperCaseUnderlinedNameConversion());
+        NameConversion nameConversion = getNameConversion(properties.getNameConversion());
+        factory.setNc(nameConversion);
 
         if (properties.isDebug()) {
             Interceptor[] interceptors = new Interceptor[]{new DebugInterceptor()};
@@ -78,6 +79,21 @@ public class BeetlSqlAutoConfiguration implements TransactionManagementConfigure
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return new DataSourceTransactionManager(dataSource);
+    }
+
+    private NameConversion getNameConversion(String nameConversionStr) {
+        NameConversion nameConversion = null;
+        String packageName = NameConversion.class.getPackage().getName();
+        try {
+            Class nameConversionClass = Class.forName(packageName + "." + nameConversionStr);
+            nameConversion = (NameConversion)nameConversionClass.newInstance();
+        } catch (Exception e) {
+            log.error("beetlsql.nameConversion不存在, 使用UnderlinedNameConversion");
+        }
+        if (nameConversion == null) {
+            nameConversion = new UnderlinedNameConversion();
+        }
+        return nameConversion;
     }
 }
 
