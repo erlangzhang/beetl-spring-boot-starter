@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.ApplicationContextInitializer=\
+com.bbu.spring.boot.autoconfigure.beetl.BeetlConfigurationApplicationContextInitializer
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.bbu.spring.boot.autoconfigure.beetl.BeetlSqlAutoConfiguration
